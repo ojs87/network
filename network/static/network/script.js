@@ -16,7 +16,9 @@ function newpost() {
    .then(response => response.json())
    .then(result => {
        // Print result
+       location.reload();
        console.log(result);
+
    });
    //stop form from submiting
    return false;

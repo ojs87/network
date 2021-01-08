@@ -13,7 +13,7 @@ from .models import User, Post
 
 
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.order_by("-timestamp")
     p = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_obj = p.get_page(page_number)
@@ -93,3 +93,42 @@ def newpost(request):
     post.save()
 
     return JsonResponse({"message": "Post sent successfully."}, status=201)
+
+def profile(request, user):
+    following = User.objects.filter(followers__username=request.user)
+    posts = Post.objects.filter(user__username=user).order_by("-timestamp")
+    p = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = p.get_page(page_number)
+    if following.filter(username=user):
+        return render(request, "network/profile.html", {
+            "page_obj" : page_obj,
+            "profilename" : user,
+            "followstatus" : "Unfollow",
+        })
+    else:
+        return render(request, "network/profile.html", {
+            "page_obj" : page_obj,
+            "profilename" : user,
+            "followstatus" : "Follow",
+    })
+
+@csrf_exempt
+def followuser(request, username):
+    following = User.objects.filter(followers__username=request.user)
+    user=User.objects.get(username=username)
+
+    if request.method == "PUT" and not following.filter(username=username):
+        data = json.loads(request.body)
+        followtarget = User.objects.get(username = data["following"])
+        user.following.add(followtarget)
+        user.save()
+        return HttpResponse(status=204)
+    else:
+        data = json.loads(request.body)
+        followtarget = User.objects.get(username = data["following"])
+        user.following.remove(followtarget)
+        user.save()
+        return HttpResponse(status=204)
+
+    return "hello"

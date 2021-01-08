@@ -1,0 +1,73 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<h1 style="display:inline"> {{profilename|title}}'s posts</h1>
+{% if user.is_authenticated %}
+<button id="follow-button" class="btn btn-primary">{{ followstatus }}</button>
+{% endif %}
+<div id=container-allposts>
+{% for post in page_obj %}
+   <div id=allposts>
+      <h3><a href="{% url "profile" user=post.user %}">{{post.user|title}}</a> wrote:</h3>
+      <p>
+         {{post.body}}
+      </p>
+      <p id="timestamp">
+         {{post.timestamp}}
+      </p>
+   </div>
+{% endfor %}
+   <nav aria-label="page navigation">
+      <ul class="pagination">
+         {% if page_obj.has_previous %}
+         <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+         {% else %}
+         <li class="page-item disabled"><a class="page-link">Previous</a></li>
+         {% endif %}
+
+         <span class="page-link">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+         </span>
+
+         {% if page_obj.has_next %}
+         <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+         {% else%}
+         <li class="page-item disabled"><a class="page-link">Next</a></li>
+         {% endif %}
+      </ul>
+   </nav>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   document.getElementById('follow-button').addEventListener('click', () => follow());
+   //document.getElementById('unfollow-button').addEventListener('click', () => unfollow());
+});
+
+function follow() {
+   // var userid= '{{ request.user }}'
+   // fetch('/users/' + userid)
+   // .then(response => response.json())
+   // .then(users =>{
+   //    console.log(users);
+   // });
+   var userid = '{{ request.user }}'
+   fetch('/users/' + userid, {
+      method: 'PUT',
+      body : JSON.stringify({
+         following : '{{ profilename }}'
+         })
+   })
+   if (document.getElementById('follow-button').innerHTML === "Unfollow") {
+   document.getElementById('follow-button').innerHTML = "Follow"
+   }  else {
+   document.getElementById('follow-button').innerHTML = "Unfollow"
+   }
+   return console.log("hello")
+}
+</script>
+{% endblock %}

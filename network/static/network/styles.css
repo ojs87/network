@@ -2,13 +2,39 @@ body {
 
 }
 
+.navbar {
+   width: 100%;
+   border-bottom: 1px solid #ccc;
+   position:sticky;
+   top: 0;
+   width: 100%;
+}
+
+
 .btn {
 
 }
 
+
 #container {
+
+}
+
+#follow-button {
+   margin-bottom:1rem;
+}
+
+#container-allposts {
    padding : 10px;
    padding-top: 0px;
+
+}
+
+#container-newpost {
+   padding : 10px;
+   padding-top: 0px;
+   background-color: white;
+
 }
 
 #newpost{
@@ -21,14 +47,27 @@ body {
    border : 1px solid #ccc;
    border-radius : .25rem;
    padding : 10px;
+   margin-bottom: 5px;
 }
 
 #newpost textarea {
-   border: 1px solid #ccc;   
+   border: 1px solid #ccc;
    width: 100%;
-   margin-bottom
+   margin-bottom: 5px;
+}
+
+#timestamp {
+   font-size: 12px;
 }
 
 h1 {
    padding : 10px;
+}
+
+h3 {
+   margin-bottom: 8px;
+}
+
+p {
+   margin-bottom: 8px;
 }
