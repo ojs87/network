@@ -44,7 +44,10 @@
 {% block script %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-   document.getElementById('follow-button').addEventListener('click', () => follow());
+   {% if user.username ==  profilename  %}
+   document.getElementById('follow-button').style.visibility = "hidden"
+   {% endif %}
+   document.querySelector('button').addEventListener('click', () => follow());
    //document.getElementById('unfollow-button').addEventListener('click', () => unfollow());
 });
 
@@ -60,14 +63,15 @@ function follow() {
       method: 'PUT',
       body : JSON.stringify({
          following : '{{ profilename }}'
-         })
+      })
    })
+
    if (document.getElementById('follow-button').innerHTML === "Unfollow") {
    document.getElementById('follow-button').innerHTML = "Follow"
    }  else {
    document.getElementById('follow-button').innerHTML = "Unfollow"
    }
-   return console.log("hello")
+   return
 }
 </script>
 {% endblock %}

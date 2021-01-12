@@ -7,7 +7,7 @@
       <div id=newpost>
          <h3>New Post</h3>
          <form id="newpostform">
-            <textarea id="newpostbody"></textarea>
+            <textarea id="newpostbody" placeholder="Make a new post"></textarea>
             <button id="post-button" class="btn btn-primary">Post</button>
          </form>
       </div>
@@ -16,9 +16,14 @@
       {% for post in page_obj %}
       <div id=allposts>
          <h3><a href="{% url "profile" user=post.user %}">{{post.user|title}}</a> wrote:</h3>
-         <p>
+
+         <p id='postbody_{{post.id}}'>
             {{post.body}}
          </p>
+         {% if user == post.user %}
+
+         <button id="edit-button_{{post.id}}" onClick="editpost({{post.id}})" class="btn btn-primary">Edit</button>
+         {% endif %}
          <p id="timestamp">
             {{post.timestamp}}
          </p>

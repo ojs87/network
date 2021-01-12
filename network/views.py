@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from datetime import datetime
 
 from .models import User, Post
 
@@ -116,19 +117,44 @@ def profile(request, user):
 @csrf_exempt
 def followuser(request, username):
     following = User.objects.filter(followers__username=request.user)
-    user=User.objects.get(username=username)
-
-    if request.method == "PUT" and not following.filter(username=username):
-        data = json.loads(request.body)
-        followtarget = User.objects.get(username = data["following"])
+    user=User.objects.get(username=request.user)
+    data = json.loads(request.body)
+    followtarget = User.objects.get(username = data["following"])
+    if request.user == followtarget:
+        return
+    if request.method == 'PUT' and not following.filter(username=data["following"]):
         user.following.add(followtarget)
         user.save()
         return HttpResponse(status=204)
     else:
-        data = json.loads(request.body)
-        followtarget = User.objects.get(username = data["following"])
         user.following.remove(followtarget)
         user.save()
         return HttpResponse(status=204)
 
-    return "hello"
+def following(request):
+    following = User.objects.filter(followers__username=request.user)
+    posts = Post.objects.filter(user__in=following).order_by("-timestamp")
+    p = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = p.get_page(page_number)
+    return render(request, "network/following.html", {
+        "page_obj" : page_obj,
+
+    })
+
+@csrf_exempt
+def editpost(request, id):
+    #editing a post must be via POST
+    if request.method != "POST":
+        returnpost=Post.objects.get(id=id)
+        return JsonResponse(returnpost.serialize())
+
+    data=json.loads(request.body)
+
+    #create newpost
+    body=data.get("body", "")
+    post = Post.objects.get(id=id)
+    post.body = body    
+    post.save()
+
+    return JsonResponse({"message": "Post sent successfully."}, status=201)

@@ -50,7 +50,7 @@ body {
    margin-bottom: 5px;
 }
 
-#newpost textarea {
+textarea {
    border: 1px solid #ccc;
    width: 100%;
    margin-bottom: 5px;
