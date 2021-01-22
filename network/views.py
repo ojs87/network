@@ -14,12 +14,14 @@ from .models import User, Post
 
 
 def index(request):
+    likes = Post.objects.filter(likes__username=request.user)
     posts = Post.objects.order_by("-timestamp")
     p = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_obj = p.get_page(page_number)
     return render(request, "network/index.html", {
-        "page_obj" : page_obj
+        "page_obj" : page_obj,
+        "likes" : likes
     })
 
 
@@ -96,6 +98,7 @@ def newpost(request):
     return JsonResponse({"message": "Post sent successfully."}, status=201)
 
 def profile(request, user):
+    likes = Post.objects.filter(likes__username=request.user)
     following = User.objects.filter(followers__username=request.user)
     posts = Post.objects.filter(user__username=user).order_by("-timestamp")
     p = Paginator(posts, 10)
@@ -105,13 +108,13 @@ def profile(request, user):
         return render(request, "network/profile.html", {
             "page_obj" : page_obj,
             "profilename" : user,
-            "followstatus" : "Unfollow",
+            "followstatus" : "Unfollow"
         })
     else:
         return render(request, "network/profile.html", {
             "page_obj" : page_obj,
             "profilename" : user,
-            "followstatus" : "Follow",
+            "followstatus" : "Follow"           
     })
 
 @csrf_exempt
@@ -145,16 +148,35 @@ def following(request):
 @csrf_exempt
 def editpost(request, id):
     #editing a post must be via POST
-    if request.method != "POST":
+
+    if request.method == "PUT":
+        data=json.loads(request.body)
+        if data.get("likes", "") == "pluslike":
+            user = User.objects.get(username=request.user)
+            post=Post.objects.get(id=id)
+            post.likes.add(user)
+            post.save()
+            return JsonResponse(post.serialize())
+        elif data.get("likes", "") == "minuslike":
+            user = User.objects.get(username=request.user)
+            post=Post.objects.get(id=id)
+            post.likes.remove(user)
+            post.save()
+            return JsonResponse(post.serialize())
+    elif request.method != "POST":
         returnpost=Post.objects.get(id=id)
         return JsonResponse(returnpost.serialize())
+
 
     data=json.loads(request.body)
 
     #create newpost
     body=data.get("body", "")
+    user = str(request.user)
     post = Post.objects.get(id=id)
-    post.body = body    
-    post.save()
+    user2=str(post.user)
+    if user2 == user:
+        post.body = body
+        post.save()
 
     return JsonResponse({"message": "Post sent successfully."}, status=201)

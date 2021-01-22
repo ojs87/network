@@ -11,11 +11,24 @@
 {% for post in page_obj %}
    <div id=allposts>
       <h3><a href="{% url "profile" user=post.user %}">{{post.user|title}}</a> wrote:</h3>
-      <p>
+      <p id='postbody_{{post.id}}'>
          {{post.body}}
       </p>
+      {% if user == post.user %}
+      <button id="edit-button_{{post.id}}" onClick="editpost({{post.id}})" class="btn btn-primary">Edit</button>
+      {% endif %}
+      {% if user != post.user %}
+      {% if user.is_authenticated %}
+      {% if user in post.likes.all %}
+      <button id="like-button_{{post.id}}" onClick="unlikepost({{post.id}})" class="btn btn-secondary">Unlike</button>
+      {% else %}
+      <button id="like-button_{{post.id}}" onClick="likepost({{post.id}})" class="btn btn-secondary">Like</button>
+      {% endif %}
+      {% endif %}
+      {% endif %}
       <p id="timestamp">
          {{post.timestamp}}
+         <span id="likescount_{{post.id}}">Likes: {{post.likes.count}}</span>
       </p>
    </div>
 {% endfor %}
@@ -74,4 +87,5 @@ function follow() {
    return
 }
 </script>
+<script src="{% static 'network/script.js' %}"></script>
 {% endblock %}

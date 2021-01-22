@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 {% block body %}
 {% if user.is_authenticated %}
 <h1>Followers Posts</h1>
@@ -18,8 +19,18 @@
       <p>
          {{post.body}}
       </p>
+      {% if user != post.user %}
+      {% if user.is_authenticated %}
+      {% if user in post.likes.all %}
+      <button id="like-button_{{post.id}}" onClick="unlikepost({{post.id}})" class="btn btn-secondary">Unlike</button>
+      {% else %}
+      <button id="like-button_{{post.id}}" onClick="likepost({{post.id}})" class="btn btn-secondary">Like</button>
+      {% endif %}
+      {% endif %}
+      {% endif %}
       <p id="timestamp">
          {{post.timestamp}}
+         <span id="likescount_{{post.id}}">Likes: {{post.likes.count}}</span>
       </p>
    </div>
    {% endfor %}
@@ -47,4 +58,7 @@
 {% else %}
 <h1>You must be logged in to view this page</h1>
 {% endif %}
+{% endblock %}
+{% block script %}
+   <script src="{% static 'network/script.js' %}"></script>
 {% endblock %}

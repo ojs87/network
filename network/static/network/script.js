@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function() {
    document.querySelector('form').onsubmit = () => newpost();
 });
@@ -41,7 +42,7 @@ function savepost(clicked_id) {
    fetch('/posts/' + clicked_id, {
       method: 'POST',
       body: JSON.stringify({
-         body: body,
+         body: body
       })
    })
    document.getElementById('edit-button_' + clicked_id).setAttribute('onClick', 'editpost(' + clicked_id + ')')
@@ -49,4 +50,38 @@ function savepost(clicked_id) {
    document.getElementById("editpostbody_" + clicked_id).remove()
    document.getElementById('postbody_' + clicked_id).append(body)
    console.log(body)
+}
+
+function likepost(clicked_id) {
+   document.getElementById('like-button_' + clicked_id).setAttribute('onClick', 'unlikepost(' + clicked_id + ')')
+   fetch('/posts/' + clicked_id, {
+      method: 'PUT',
+      body: JSON.stringify({
+         likes: "pluslike"
+      })
+   })
+      .then(response => response.json())
+      .then(post => {
+         console.log(post);
+         document.getElementById('likescount_' + clicked_id).innerHTML = "Likes: " + (post["likes"])
+   })
+
+
+   document.getElementById('like-button_' + clicked_id).innerHTML="Unlike"
+}
+
+function unlikepost(clicked_id) {
+   document.getElementById('like-button_' + clicked_id).setAttribute('onClick', 'likepost(' + clicked_id + ')')
+   fetch('/posts/' + clicked_id, {
+      method: 'PUT',
+      body: JSON.stringify({
+         likes: "minuslike"
+      })
+   })
+      .then(response => response.json())
+      .then(post => {
+      console.log(post);
+      document.getElementById('likescount_' + clicked_id).innerHTML = "Likes: " + (post["likes"])
+   })
+   document.getElementById('like-button_' + clicked_id).innerHTML="Like"
 }

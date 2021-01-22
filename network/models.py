@@ -9,11 +9,11 @@ class Post(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="posts")
     body = models.TextField(blank=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
-    likes = models.IntegerField(default=0)
+    likes = models.ManyToManyField("User", related_name="likes")
 
     def serialize(self):
         return {
             "body" : self.body,
             "timestamp" : self.timestamp.strftime("%b %d %Y, %I:%M %p"),
-            "likes" : self.likes
+            "likes" : self.likes.count()      
         }
