@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block body %}
-   <h1>All Posts</h1>
-   <div id=container-newpost>
+<div id="container" class="flex-container">
+   <h1 class="flex-item" style="margin-left:5px">All Posts</h1>
+   <div id=container-newpost class="flex-item">
       <div id=newpost>
          <h3>New Post</h3>
          <form id="newpostform">
@@ -12,7 +13,7 @@
          </form>
       </div>
    </div>
-   <div id=container-allposts>
+   <div id=container-allposts class="flex-item">
       {% for post in page_obj %}
       <div id=allposts>
          <h3><a href="{% url "profile" user=post.user %}">{{post.user|title}}</a> wrote:</h3>

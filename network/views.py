@@ -114,11 +114,12 @@ def profile(request, user):
         return render(request, "network/profile.html", {
             "page_obj" : page_obj,
             "profilename" : user,
-            "followstatus" : "Follow"           
+            "followstatus" : "Follow"
     })
 
 @csrf_exempt
 def followuser(request, username):
+    #add the post author to the users followers
     following = User.objects.filter(followers__username=request.user)
     user=User.objects.get(username=request.user)
     data = json.loads(request.body)
@@ -135,6 +136,7 @@ def followuser(request, username):
         return HttpResponse(status=204)
 
 def following(request):
+    #return queryset with posts from people the user is following
     following = User.objects.filter(followers__username=request.user)
     posts = Post.objects.filter(user__in=following).order_by("-timestamp")
     p = Paginator(posts, 10)
@@ -147,16 +149,17 @@ def following(request):
 
 @csrf_exempt
 def editpost(request, id):
-    #editing a post must be via POST
 
     if request.method == "PUT":
         data=json.loads(request.body)
+        #if the button is "like"
         if data.get("likes", "") == "pluslike":
             user = User.objects.get(username=request.user)
             post=Post.objects.get(id=id)
             post.likes.add(user)
             post.save()
             return JsonResponse(post.serialize())
+        #if the button is "unlike"
         elif data.get("likes", "") == "minuslike":
             user = User.objects.get(username=request.user)
             post=Post.objects.get(id=id)
@@ -167,10 +170,8 @@ def editpost(request, id):
         returnpost=Post.objects.get(id=id)
         return JsonResponse(returnpost.serialize())
 
-
     data=json.loads(request.body)
-
-    #create newpost
+    #make sure the user is the one editing their own post
     body=data.get("body", "")
     user = str(request.user)
     post = Post.objects.get(id=id)

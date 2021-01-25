@@ -1,5 +1,5 @@
 body {
-
+   background-color:#ffefcc;
 }
 
 .navbar {
@@ -10,40 +10,25 @@ body {
    width: 100%;
 }
 
-
-.btn {
-
-}
-
-
-#container {
-
-}
-
-#follow-button {
-   margin-bottom:1rem;
-}
-
 #container-allposts {
    padding : 10px;
    padding-top: 0px;
-
 }
 
 #container-newpost {
    padding : 10px;
    padding-top: 0px;
-   background-color: white;
-
 }
 
 #newpost{
    border : 1px solid #ccc;
    border-radius : .25rem;
    padding : 12px;
+   background-color:white;
 }
 
 #allposts {
+   background-color:white;
    border : 1px solid #ccc;
    border-radius : .25rem;
    padding : 10px;
@@ -54,6 +39,7 @@ textarea {
    border: 1px solid #ccc;
    width: 100%;
    margin-bottom: 5px;
+   background-color:white;
 }
 
 #timestamp {
@@ -62,6 +48,7 @@ textarea {
 
 h1 {
    padding : 10px;
+   margin-left:0px;
 }
 
 h3 {
@@ -70,4 +57,15 @@ h3 {
 
 p {
    margin-bottom: 8px;
+}
+
+.flex-container {
+   background-color:#ffefcc;
+   display:flex;
+   flex-flow: row wrap;
+   justify-content:center;
+}
+
+.flex-item {
+   width:1000px;
 }
